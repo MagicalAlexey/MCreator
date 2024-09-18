@@ -28,7 +28,6 @@ import net.mcreator.workspace.Workspace;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,8 +59,6 @@ import java.util.stream.Stream;
 	protected String modElementsPackage;
 
 	private transient Workspace workspace; // we should never serialize this!!
-
-	private static final Pattern cleanVersionPattern = Pattern.compile("[^0-9.]+");
 
 	public WorkspaceSettings(WorkspaceSettings other) {
 		this.modid = other.modid;
@@ -202,13 +199,6 @@ import java.util.stream.Stream;
 
 	public String getVersion() {
 		return version;
-	}
-
-	public String getCleanVersion() {
-		String cleanVersion = cleanVersionPattern.matcher(version).replaceAll("");
-		if (!cleanVersion.isEmpty())
-			return cleanVersion;
-		return "0.0.0.0";
 	}
 
 	public String getDescription() {
