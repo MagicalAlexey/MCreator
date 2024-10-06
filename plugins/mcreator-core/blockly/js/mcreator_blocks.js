@@ -31,7 +31,8 @@ Blockly.Blocks['event_trigger'] = {
             .appendField(javabridge.t("blockly.block.event_trigger.line1"));
         this.appendDummyInput()
             .appendField(javabridge.t("blockly.block.event_trigger.line2"))
-            .appendField(new FieldDataListSelector('global_triggers'), 'trigger');
+            .appendField(new Blockly.FieldDropdown(
+                jsonToBlocklyDropDownArray(javabridge.getGlobalTriggers())), 'trigger');
         this.setNextStatement(true);
         this.setStyle('hat_blocks');
         this.setColour(90);
