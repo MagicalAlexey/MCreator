@@ -40,7 +40,8 @@ public class Sprite extends GUIComponent {
 	public Procedure displayCondition;
 	public NumberProcedure spriteIndex;
 
-	public Sprite(int x, int y, String sprite, int spritesCount, Procedure displayCondition, NumberProcedure spriteIndex) {
+	public Sprite(int x, int y, String sprite, int spritesCount, Procedure displayCondition,
+			NumberProcedure spriteIndex) {
 		super(x, y);
 		this.sprite = sprite;
 		this.spritesCount = spritesCount;
@@ -48,7 +49,8 @@ public class Sprite extends GUIComponent {
 		this.spriteIndex = spriteIndex;
 	}
 
-	public Sprite(int x, int y, String sprite, int spritesCount, Procedure displayCondition, NumberProcedure spriteIndex, AnchorPoint anchorPoint) {
+	public Sprite(int x, int y, String sprite, int spritesCount, Procedure displayCondition,
+			NumberProcedure spriteIndex, AnchorPoint anchorPoint) {
 		this(x, y, sprite, spritesCount, displayCondition, spriteIndex);
 		this.anchorPoint = anchorPoint;
 	}
@@ -76,12 +78,7 @@ public class Sprite extends GUIComponent {
 			r = new Rectangle(0, 0, width, height);
 		}
 
-		java.awt.Image sprite = ImageUtils.crop(ImageUtils.toBufferedImage(actualImage), r);
-
-		int cw = sprite.getWidth(null);
-		int ch = sprite.getHeight(null);
-
-		g.drawImage(sprite, cx, cy, cw, ch, wysiwygEditor);
+		g.drawImage(ImageUtils.crop(ImageUtils.toBufferedImage(actualImage), r), cx, cy, width, height, wysiwygEditor);
 	}
 
 	@SuppressWarnings("unused") public int getTextureWidth(Workspace workspace) {
@@ -96,14 +93,14 @@ public class Sprite extends GUIComponent {
 		int width = getImage(workspace).getWidth(null);
 		int height = getImage(workspace).getHeight(null);
 
-		return width > height ? width / spritesCount : width;
+		return Math.max(1, width > height ? width / spritesCount : width);
 	}
 
 	@Override public int getHeight(Workspace workspace) {
 		int width = getImage(workspace).getWidth(null);
 		int height = getImage(workspace).getHeight(null);
 
-		return width < height ? height / spritesCount : height;
+		return Math.max(1, width < height ? height / spritesCount : height);
 	}
 
 	public java.awt.Image getImage(Workspace workspace) {
