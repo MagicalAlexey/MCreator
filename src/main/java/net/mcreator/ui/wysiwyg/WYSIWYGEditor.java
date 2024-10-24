@@ -462,6 +462,7 @@ public class WYSIWYGEditor extends JPanel {
 	protected void editCurrentlySelectedComponent() {
 		if (list.getSelectedValue() != null) {
 			GUIComponent component = list.getSelectedValue();
+			final boolean wasLocked = component.locked;
 
 			for (WYSIWYGComponentRegistration<?> componentRegistration : COMPONENT_REGISTRY) {
 				if (componentRegistration.component() == component.getClass()
@@ -477,6 +478,8 @@ public class WYSIWYGEditor extends JPanel {
 					break;
 				}
 			}
+			if (component != null)
+				component.locked = wasLocked;
 
 			list.setSelectedValue(component, true);
 		}
