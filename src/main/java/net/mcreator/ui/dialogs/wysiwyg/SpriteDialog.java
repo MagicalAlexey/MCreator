@@ -38,33 +38,41 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SpriteDialog extends AbstractWYSIWYGDialog<Sprite> {
+
 	public SpriteDialog(WYSIWYGEditor editor, @Nullable Sprite sprite) {
 		super(editor, sprite);
-		setSize(820, 170);
+		setSize(650, 200);
 		setLocationRelativeTo(editor.mcreator);
 		setModal(true);
 		setTitle(L10N.t("dialog.gui.sprite_title"));
 
-		JPanel pane = new JPanel();
-		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
+		setLayout(new BorderLayout(5, 5));
 
-		JPanel options = new JPanel(new BorderLayout());
+		JPanel options = new JPanel(new BorderLayout(2, 2));
 
 		TextureComboBox textureSelector = new TextureComboBox(editor.mcreator, TextureType.SCREEN, false);
 
-		JSpinner spritesCount = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
-		spritesCount.setPreferredSize(new Dimension(80, spritesCount.getPreferredSize().height));
+		SpinnerNumberModel spritesCountModel = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
+		JSpinner spritesCount = new JSpinner(spritesCountModel);
 
-		options.add("Center", PanelUtils.centerAndSouthElement(
-				PanelUtils.join(FlowLayout.LEFT, L10N.label("dialog.gui.image_texture"), textureSelector),
-				PanelUtils.join(FlowLayout.LEFT, HelpUtils.wrapWithHelpButton(IHelpContext.NONE.withEntry("gui/sprite_count"),
-						L10N.label("dialog.gui.sprite_count")), spritesCount)));
+		SpinnerNumberModel model = new SpinnerNumberModel(0, 0, (int) spritesCount.getValue() - 1, 1);
+		JSpinner spinner = new JSpinner(model);
 
-		final JComboBox<GUIComponent.AnchorPoint> anchor = new JComboBox<>(GUIComponent.AnchorPoint.values());
-		anchor.setSelectedItem(GUIComponent.AnchorPoint.CENTER);
-		if (!editor.isNotOverlayType) {
-			options.add("South", PanelUtils.join(FlowLayout.LEFT, L10N.label("dialog.gui.anchor"), anchor));
-		}
+		NumberProcedureSelector spriteIndex = new NumberProcedureSelector(
+				IHelpContext.NONE.withEntry("gui/sprite_index"), editor.mcreator, L10N.t("dialog.gui.sprite_index"),
+				ProcedureSelector.Side.CLIENT, false, spinner, 80,
+				Dependency.fromString("x:number/y:number/z:number/world:world/entity:entity/guistate:map"));
+		spriteIndex.refreshList();
+
+		JPanel opts = new JPanel(new GridLayout(2, 2, 2, 2));
+
+		opts.add(L10N.label("dialog.gui.image_texture"));
+		opts.add(textureSelector);
+		opts.add(HelpUtils.wrapWithHelpButton(IHelpContext.NONE.withEntry("gui/sprite_count"),
+				L10N.label("dialog.gui.sprite_count")));
+		opts.add(spritesCount);
+
+		options.add("Center", PanelUtils.centerAndSouthElement(opts, spriteIndex, 2, 2));
 
 		ProcedureSelector displayCondition = new ProcedureSelector(
 				IHelpContext.NONE.withEntry("gui/sprite_display_condition"), editor.mcreator,
@@ -73,28 +81,39 @@ public class SpriteDialog extends AbstractWYSIWYGDialog<Sprite> {
 				Dependency.fromString("x:number/y:number/z:number/world:world/entity:entity/guistate:map"));
 		displayCondition.refreshList();
 
-		SpinnerNumberModel model = new SpinnerNumberModel(0, 0, (int) spritesCount.getValue() - 1, 1);
-		JSpinner spinner = new JSpinner(model);
-
 		final int[] previousSpritesCount = { (int) spritesCount.getValue() };
 		spritesCount.addChangeListener(e -> {
-			model.setMaximum((int) spritesCount.getValue() - 1);
-
 			int currentSpritesCount = (int) spritesCount.getValue();
-			if (previousSpritesCount[0] > currentSpritesCount)
-				model.setValue((int) model.getValue() - 1);
+
+			model.setMaximum(currentSpritesCount - 1);
+			if (previousSpritesCount[0] > currentSpritesCount
+					&& model.getNumber().intValue() == previousSpritesCount[0] - 1)
+				model.setValue(model.getNumber().intValue() - 1);
 			previousSpritesCount[0] = currentSpritesCount;
 		});
 
-		NumberProcedureSelector spriteIndex = new NumberProcedureSelector(
-				IHelpContext.NONE.withEntry("gui/sprite_index"), editor.mcreator,
-				L10N.t("dialog.gui.sprite_index"), ProcedureSelector.Side.CLIENT, false,
-				spinner, 80,
-				Dependency.fromString("x:number/y:number/z:number/world:world/entity:entity/guistate:map"));
-		spriteIndex.refreshList();
+		textureSelector.getComboBox().addActionListener(e -> {
+			if (textureSelector.getTexture() != null) {
+				ImageIcon selectedTexture = textureSelector.getTexture().getTextureIcon(editor.mcreator.getWorkspace());
+				int maximum = Math.max(selectedTexture.getIconWidth(), selectedTexture.getIconHeight());
 
-		add("East", PanelUtils.northAndCenterElement(displayCondition, PanelUtils.centerInPanel(spriteIndex)));
-		add("Center", PanelUtils.join(FlowLayout.LEFT, options));
+				spritesCountModel.setMaximum(maximum);
+				if (maximum < spritesCountModel.getNumber().intValue())
+					spritesCountModel.setValue(maximum);
+
+				if (model.getNumber().intValue() > maximum)
+					model.setValue(maximum - 1);
+			}
+		});
+
+		final JComboBox<GUIComponent.AnchorPoint> anchor = new JComboBox<>(GUIComponent.AnchorPoint.values());
+		anchor.setSelectedItem(GUIComponent.AnchorPoint.CENTER);
+		if (!editor.isNotOverlayType) {
+			options.add("South", PanelUtils.join(FlowLayout.LEFT, L10N.label("dialog.gui.anchor"), anchor));
+		}
+
+		add("Center", PanelUtils.totalCenterInPanel(
+				PanelUtils.centerAndEastElement(options, PanelUtils.pullElementUp(displayCondition), 10, 10)));
 
 		JButton ok = new JButton(UIManager.getString("OptionPane.okButtonText"));
 
@@ -128,8 +147,9 @@ public class SpriteDialog extends AbstractWYSIWYGDialog<Sprite> {
 				} else {
 					int idx = editor.components.indexOf(sprite);
 					editor.components.remove(sprite);
-					Sprite spriteNew = new Sprite(sprite.getX(), sprite.getY(), textureSelector.getTextureName(), (int) spritesCount.getValue(),
-							displayCondition.getSelectedProcedure(), spriteIndex.getSelectedProcedure());
+					Sprite spriteNew = new Sprite(sprite.getX(), sprite.getY(), textureSelector.getTextureName(),
+							(int) spritesCount.getValue(), displayCondition.getSelectedProcedure(),
+							spriteIndex.getSelectedProcedure());
 					if (!editor.isNotOverlayType)
 						spriteNew.anchorPoint = (GUIComponent.AnchorPoint) anchor.getSelectedItem();
 					editor.components.add(idx, spriteNew);
@@ -140,4 +160,5 @@ public class SpriteDialog extends AbstractWYSIWYGDialog<Sprite> {
 
 		setVisible(true);
 	}
+
 }
