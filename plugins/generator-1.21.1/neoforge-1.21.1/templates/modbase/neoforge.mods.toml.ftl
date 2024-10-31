@@ -4,7 +4,7 @@ license="${JavaConventions.escapeStringForJava(settings.getLicense())}"
 
 [[mods]]
 modId="${settings.getModID()}"
-version="${settings.getVersion()}"
+version="${settings.getCleanVersion()}"
 displayName="${JavaConventions.escapeStringForJava(settings.getModName())}"
 <#if settings.getUpdateURL()?has_content>
 updateJSONURL="${JavaConventions.escapeStringForJava(settings.getUpdateURL())}"

@@ -536,7 +536,7 @@ public class WorkspaceDialogs {
 						Generator.GENERATOR_CACHE.get(workspace.getWorkspaceSettings().getCurrentGenerator()));
 				modName.setText(workspace.getWorkspaceSettings().getModName());
 				modID.setText(workspace.getWorkspaceSettings().getModID());
-				version.setText(workspace.getWorkspaceSettings().getVersion());
+				version.setText(workspace.getWorkspaceSettings().getCleanVersion());
 				description.setText(workspace.getWorkspaceSettings().getDescription());
 				author.setText(workspace.getWorkspaceSettings().getAuthor());
 				license.setSelectedItem(workspace.getWorkspaceSettings().getLicense());

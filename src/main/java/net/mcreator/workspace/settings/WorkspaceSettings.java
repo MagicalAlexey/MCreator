@@ -28,6 +28,7 @@ import net.mcreator.workspace.Workspace;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +37,7 @@ import java.util.stream.Stream;
 	private final String modid;
 
 	private String modName;
-	private String version;
+	private String cleanVersion;
 	private String description;
 	private String author;
 	private String websiteURL;
@@ -60,10 +61,12 @@ import java.util.stream.Stream;
 
 	private transient Workspace workspace; // we should never serialize this!!
 
+	private static final Pattern cleanVersionPattern = Pattern.compile("[^0-9.]+");
+
 	public WorkspaceSettings(WorkspaceSettings other) {
 		this.modid = other.modid;
 		this.modName = other.modName;
-		this.version = other.version;
+		this.cleanVersion = other.cleanVersion;
 		this.description = other.description;
 		this.author = other.author;
 		this.license = other.license;
@@ -95,7 +98,7 @@ import java.util.stream.Stream;
 	}
 
 	public void setVersion(String version) {
-		this.version = version;
+		this.cleanVersion = version;
 	}
 
 	public void setDescription(String description) {
@@ -197,8 +200,8 @@ import java.util.stream.Stream;
 		return modName;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getCleanVersion() {
+		return cleanVersion;
 	}
 
 	public String getDescription() {
@@ -262,7 +265,7 @@ import java.util.stream.Stream;
 	public int[] get3DigitVersion() {
 		int[] ver3 = { 0, 0, 0 };
 		try {
-			String[] parts = version.split("\\.");
+			String[] parts = cleanVersion.split("\\.");
 			for (int i = 0; i < Math.min(parts.length, ver3.length); i++) {
 				String digit = parts[i].replaceAll("[^\\d]", "");
 				ver3[i] = Integer.parseInt(digit);
