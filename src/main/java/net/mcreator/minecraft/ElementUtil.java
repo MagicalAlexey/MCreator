@@ -30,6 +30,7 @@ import net.mcreator.workspace.elements.ModElement;
 import net.mcreator.workspace.elements.SoundElement;
 import net.mcreator.workspace.elements.VariableType;
 import net.mcreator.workspace.elements.VariableTypeLoader;
+import net.mcreator.workspace.resources.Animation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -208,6 +209,17 @@ public class ElementUtil {
 
 	public static List<DataListEntry> loadMapColors() {
 		return DataListLoader.loadDataList("mapcolors");
+	}
+
+	public static List<DataListEntry> loadAnimations(Workspace workspace) {
+		List<DataListEntry> animations = new ArrayList<>();
+		for (Animation animation : Animation.getAnimations(workspace)) {
+			for (String subanimation : animation.getSubanimations()) {
+				animations.add(new DataListEntry.Dummy("CUSTOM:" + animation.getName() + "." + subanimation));
+			}
+		}
+		animations.addAll(DataListLoader.loadDataList("animations"));
+		return animations;
 	}
 
 	public static List<DataListEntry> loadAllEntities(Workspace workspace) {

@@ -514,6 +514,11 @@ public class TestWorkspaceDataProvider {
 			fluid.name = modElement.getName();
 			fluid.textureFlowing = new TextureHolder(modElement.getWorkspace(), "test");
 			fluid.textureStill = new TextureHolder(modElement.getWorkspace(), "test2");
+			fluid.textureRenderOverlay = new TextureHolder(modElement.getWorkspace(), emptyLists ? "" : "other0");
+			fluid.hasFog = _true;
+			fluid.fogColor = emptyLists ? null : Color.red;
+			fluid.fogStartDistance = new NumberProcedure(emptyLists ? null : "number3", 8);
+			fluid.fogEndDistance = new NumberProcedure(emptyLists ? null : "number3", 16);
 			fluid.canMultiply = _true;
 			fluid.flowRate = 8;
 			fluid.levelDecrease = 2;
@@ -1139,6 +1144,7 @@ public class TestWorkspaceDataProvider {
 				entry1.effect = new EffectEntry(modElement.getWorkspace(),
 						getRandomDataListEntry(random, ElementUtil.loadAllPotionEffects(modElement.getWorkspace())));
 				entry1.duration = 3600;
+				entry1.infinite = _true;
 				entry1.amplifier = 1;
 				entry1.ambient = !_true;
 				entry1.showParticles = !_true;
@@ -1148,6 +1154,7 @@ public class TestWorkspaceDataProvider {
 				entry2.effect = new EffectEntry(modElement.getWorkspace(),
 						getRandomDataListEntry(random, ElementUtil.loadAllPotionEffects(modElement.getWorkspace())));
 				entry2.duration = 7200;
+				entry2.infinite = !_true;
 				entry2.amplifier = 0;
 				entry2.ambient = _true;
 				entry2.showParticles = _true;
@@ -1845,6 +1852,18 @@ public class TestWorkspaceDataProvider {
 			modelLayer.glow = true;
 			modelLayer.condition = null;
 			livingEntity.modelLayers.add(modelLayer);
+		}
+		livingEntity.animations = new ArrayList<>();
+		if (!emptyLists) {
+			for (DataListEntry anim : ElementUtil.loadAnimations(modElement.getWorkspace())) {
+				LivingEntity.AnimationEntry animation = new LivingEntity.AnimationEntry();
+				animation.animation = new Animation(modElement.getWorkspace(), anim);
+				animation.condition = random.nextBoolean() ? null : new Procedure("condition1");
+				animation.speed = 12.3;
+				animation.amplitude = 15.4;
+				animation.walking = _true;
+				livingEntity.animations.add(animation);
+			}
 		}
 		return livingEntity;
 	}
