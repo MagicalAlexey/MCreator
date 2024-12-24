@@ -121,7 +121,7 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 	private final JSpinner rangedAttackRadius = new JSpinner(new SpinnerNumberModel(10, 0, 1024, 0.1));
 
 	private final JSpinner spawningProbability = new JSpinner(new SpinnerNumberModel(20, 1, 1000, 1));
-	private final JMinMaxSpinner numberOfMobsPerGroup = new JMinMaxSpinner(4, 4, 1, 1000, 1);
+	private final JMinMaxSpinner numberOfMobsPerGroup = new JMinMaxSpinner(4, 4, 1, 1000, 1).allowEqualValues();
 
 	private final JSpinner modelWidth = new JSpinner(new SpinnerNumberModel(0.6, 0, 1024, 0.1));
 	private final JSpinner modelHeight = new JSpinner(new SpinnerNumberModel(1.8, 0, 1024, 0.1));
@@ -165,7 +165,7 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 	private MCItemHolder equipmentBoots;
 	private MCItemHolder equipmentOffHand;
 
-	private final SearchableComboBox<String> guiBoundTo = new SearchableComboBox<>();
+	private SingleModElementSelector guiBoundTo;
 	private final JSpinner inventorySize = new JSpinner(new SpinnerNumberModel(9, 0, 256, 1));
 	private final JSpinner inventoryStackSize = new JSpinner(new SpinnerNumberModel(64, 1, 1024, 1));
 
@@ -374,15 +374,14 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 
 		breedTriggerItems = new MCItemListField(mcreator, ElementUtil::loadBlocksAndItemsAndTags, false, true);
 		entityDataList = new JEntityDataList(mcreator, this);
-
-		numberOfMobsPerGroup.setAllowEqualValues(true);
+		guiBoundTo = new SingleModElementSelector(mcreator, ModElementType.GUI);
 
 		mobModelTexture = new TextureComboBox(mcreator, TextureType.ENTITY).requireValue(
 				"elementgui.living_entity.error_entity_model_needs_texture");
 
-		guiBoundTo.addActionListener(e -> {
-			if (!isEditingMode()) {
-				String selected = guiBoundTo.getSelectedItem();
+		guiBoundTo.addEntrySelectedListener(e -> {
+			if (!isEditingMode() && !guiBoundTo.isEmpty()) {
+				String selected = guiBoundTo.getEntry();
 				if (selected != null) {
 					ModElement element = mcreator.getWorkspace().getModElementByName(selected);
 					if (element != null) {
@@ -969,10 +968,6 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 						.filter(var -> var.getType() == ModElementType.PROJECTILE).map(ModElement::getName)
 						.collect(Collectors.toList())), "Default item");
 
-		ComboBoxUtil.updateComboBoxContents(guiBoundTo, ListUtils.merge(Collections.singleton("<NONE>"),
-				mcreator.getWorkspace().getModElements().stream().filter(var -> var.getType() == ModElementType.GUI)
-						.map(ModElement::getName).collect(Collectors.toList())), "<NONE>");
-
 		disableMobModelCheckBoxListener = false;
 	}
 
@@ -1116,7 +1111,7 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 		breatheUnderwater.setSelectedProcedure(livingEntity.breatheUnderwater);
 		pushedByFluids.setSelectedProcedure(livingEntity.pushedByFluids);
 		flyingMob.setSelected(livingEntity.flyingMob);
-		guiBoundTo.setSelectedItem(livingEntity.guiBoundTo);
+		guiBoundTo.setEntry(livingEntity.guiBoundTo);
 		inventorySize.setValue(livingEntity.inventorySize);
 		inventoryStackSize.setValue(livingEntity.inventoryStackSize);
 		for (int i = 0; i < livingEntity.raidSpawnsCount.length; i++)
@@ -1238,7 +1233,7 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 		livingEntity.creativeTabs = creativeTabs.getListElements();
 		livingEntity.inventorySize = (int) inventorySize.getValue();
 		livingEntity.inventoryStackSize = (int) inventoryStackSize.getValue();
-		livingEntity.guiBoundTo = guiBoundTo.getSelectedItem();
+		livingEntity.guiBoundTo = guiBoundTo.getEntry();
 		livingEntity.entityDataEntries = entityDataList.getEntries();
 		for (int i = 0; i < livingEntity.raidSpawnsCount.length; i++)
 			livingEntity.raidSpawnsCount[i] = (int) raidSpawnsCount[i].getValue();

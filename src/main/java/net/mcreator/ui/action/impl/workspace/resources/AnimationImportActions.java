@@ -54,7 +54,7 @@ public class AnimationImportActions {
 
 	public static class JAVA extends BasicAction {
 		public JAVA(ActionRegistry actionRegistry) {
-			super(actionRegistry, L10N.t("action.workspace.resources.import_java_model_animation"), actionEvent -> {
+			super(actionRegistry, L10N.t("action.workspace.resources.import_java_animation"), actionEvent -> {
 				File file = FileDialogs.getOpenDialog(actionRegistry.getMCreator(), new String[] { ".java" });
 				if (file != null)
 					importJavaModelAnimation(actionRegistry.getMCreator(), file);
@@ -124,9 +124,9 @@ public class AnimationImportActions {
 		FileIO.writeStringToFile(classJavaSource.toString(),
 				new File(mcreator.getFolderManager().getModelAnimationsDir(), classJavaSource.getName() + ".java"));
 
-		mcreator.mv.resourcesPan.workspacePanelAnimations.reloadElements();
-		if (mcreator.mcreatorTabs.getCurrentTab().getContent() instanceof ModElementGUI)
-			((ModElementGUI<?>) mcreator.mcreatorTabs.getCurrentTab().getContent()).reloadDataLists();
+		mcreator.reloadWorkspaceTabContents();
+		if (mcreator.getTabs().getCurrentTab().getContent() instanceof ModElementGUI)
+			((ModElementGUI<?>) mcreator.getTabs().getCurrentTab().getContent()).reloadDataLists();
 	}
 
 }

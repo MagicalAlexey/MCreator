@@ -171,7 +171,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 	private final MCItemHolder customDrop = new MCItemHolder(mcreator, ElementUtil::loadBlocksAndItems);
 
 	private final JComboBox<String> generationShape = new JComboBox<>(new String[] { "UNIFORM", "TRIANGLE" });
-	private final JMinMaxSpinner generateHeight = new JMinMaxSpinner(0, 64, -2032, 2016, 1);
+	private final JMinMaxSpinner generateHeight = new JMinMaxSpinner(0, 64, -2032, 2016, 1).allowEqualValues();
 	private final JSpinner frequencyPerChunks = new JSpinner(new SpinnerNumberModel(10, 1, 64, 1));
 	private final JSpinner frequencyOnChunk = new JSpinner(new SpinnerNumberModel(16, 1, 64, 1));
 	private BiomeListField restrictionBiomes;
@@ -232,7 +232,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 	private final JCheckBox hasInventory = L10N.checkbox("elementgui.block.has_inventory");
 
 	private final JCheckBox openGUIOnRightClick = L10N.checkbox("elementgui.common.enable");
-	private final SearchableComboBox<String> guiBoundTo = new SearchableComboBox<>();
+	private SingleModElementSelector guiBoundTo;
 
 	private final JSpinner inventorySize = new JSpinner(new SpinnerNumberModel(9, 0, 256, 1));
 	private final JSpinner inventoryStackSize = new JSpinner(new SpinnerNumberModel(64, 1, 1024, 1));
@@ -268,17 +268,15 @@ public class BlockGUI extends ModElementGUI<Block> {
 		restrictionBiomes = new BiomeListField(mcreator, true);
 		restrictionBiomes.setValidator(new ItemListFieldSingleTagValidator(restrictionBiomes));
 
-		restrictionBiomes = new BiomeListField(mcreator, true);
-		restrictionBiomes.setValidator(new ItemListFieldSingleTagValidator(restrictionBiomes));
-
 		fluidRestrictions = new FluidListField(mcreator);
 
 		boundingBoxList = new JBoundingBoxList(mcreator, this, renderType::getSelectedItem);
 
 		material.setPrototypeDisplayValue(new DataListEntry.Dummy("No legacy material"));
 
+		guiBoundTo = new SingleModElementSelector(mcreator, ModElementType.GUI);
+
 		blocksToReplace.setListElements(List.of(new MItemBlock(mcreator.getWorkspace(), "TAG:stone_ore_replaceables")));
-		generateHeight.setAllowEqualValues(true);
 
 		generateFeature.setOpaque(false);
 
@@ -939,9 +937,9 @@ public class BlockGUI extends ModElementGUI<Block> {
 		inSlotIDs.setValidator(new CommaSeparatedNumbersValidator(inSlotIDs));
 		inSlotIDs.enableRealtimeValidation();
 
-		guiBoundTo.addActionListener(e -> {
+		guiBoundTo.addEntrySelectedListener(e -> {
 			if (!isEditingMode()) {
-				String selected = guiBoundTo.getSelectedItem();
+				String selected = guiBoundTo.getEntry();
 				if (selected != null) {
 					ModElement element = mcreator.getWorkspace().getModElementByName(selected);
 					if (element != null) {
@@ -1296,10 +1294,6 @@ public class BlockGUI extends ModElementGUI<Block> {
 								.filter(el -> el.getType() == Model.Type.JSON || el.getType() == Model.Type.OBJ)
 								.collect(Collectors.toList())));
 
-		ComboBoxUtil.updateComboBoxContents(guiBoundTo, ListUtils.merge(Collections.singleton("<NONE>"),
-				mcreator.getWorkspace().getModElements().stream().filter(var -> var.getType() == ModElementType.GUI)
-						.map(ModElement::getName).collect(Collectors.toList())), "<NONE>");
-
 		ComboBoxUtil.updateComboBoxContents(aiPathNodeType,
 				Arrays.asList(ElementUtil.getDataListAsStringArray("pathnodetypes")), "DEFAULT");
 	}
@@ -1323,7 +1317,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 		particleTexture.setTexture(block.particleTexture);
 		textures.setTextures(block.texture, block.textureTop, block.textureLeft, block.textureFront, block.textureRight,
 				block.textureBack);
-		guiBoundTo.setSelectedItem(block.guiBoundTo);
+		guiBoundTo.setEntry(block.guiBoundTo);
 		rotationMode.setSelectedIndex(block.rotationMode);
 		enablePitch.setSelected(block.enablePitch);
 		blockStates.setProperties(block.customProperties);
@@ -1468,7 +1462,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 		block.transparencyType = (String) transparencyType.getSelectedItem();
 		block.tintType = (String) tintType.getSelectedItem();
 		block.isItemTinted = isItemTinted.isSelected();
-		block.guiBoundTo = guiBoundTo.getSelectedItem();
+		block.guiBoundTo = guiBoundTo.getEntry();
 		block.rotationMode = rotationMode.getSelectedIndex();
 		block.enablePitch = enablePitch.isSelected();
 		block.customProperties = blockStates.getProperties();

@@ -59,6 +59,11 @@ import java.util.stream.Collectors;
 	@ModElementReference public String suspiciousStewEffect;
 	public int suspiciousStewDuration;
 
+	public double secondaryTreeChance;
+	public ConfiguredFeatureEntry[] trees;
+	public ConfiguredFeatureEntry[] flowerTrees;
+	public ConfiguredFeatureEntry[] megaTrees;
+
 	public String growapableSpawnType;
 	public int growapableMaxHeight;
 
@@ -74,6 +79,7 @@ import java.util.stream.Collectors;
 	public int luminance;
 	public boolean unbreakable;
 	public boolean isSolid;
+	public boolean isWaterloggable;
 
 	public boolean isCustomSoundType;
 	public StepSound soundOnStep;
@@ -159,10 +165,23 @@ import java.util.stream.Collectors;
 		this.patchSize = 64;
 
 		this.boundingBoxes = new ArrayList<>();
+
+		this.secondaryTreeChance = 0.1;
+		this.trees = new ConfiguredFeatureEntry[2];
+		this.flowerTrees = new ConfiguredFeatureEntry[2];
+		this.megaTrees = new ConfiguredFeatureEntry[2];
 	}
 
 	public boolean generateLootTable() {
 		return !useLootTableForDrops;
+	}
+
+	public boolean isWaterloggable() {
+		// Disable waterlogging for sapling with mega trees due to ghost water blocks when the tree fails to grow
+		if ("sapling".equals(plantType) && (megaTrees[0] != null || megaTrees[1] != null)) {
+			return false;
+		}
+		return isWaterloggable;
 	}
 
 	@Override public Model getItemModel() {

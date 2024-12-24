@@ -50,7 +50,7 @@ public class WorkspacePanelAnimations extends AbstractResourcePanel<Animation> {
 				!= GeneratorStats.CoverageStatus.NONE)
 			addToolBarButton("action.workspace.resources.import_java_animation",
 					UIRES.get("16px.importjavamodelanimation"),
-					e -> workspacePanel.getMCreator().actionRegistry.importJavaModelAnimation.doAction());
+					e -> workspacePanel.getMCreator().getActionRegistry().importJavaModelAnimation.doAction());
 
 		addToolBarButton("common.search_usages", UIRES.get("16px.search"), e -> {
 			if (!elementList.isSelectionEmpty()) {
@@ -63,7 +63,7 @@ public class WorkspacePanelAnimations extends AbstractResourcePanel<Animation> {
 
 				workspacePanel.getMCreator().setCursor(Cursor.getDefaultCursor());
 				SearchUsagesDialog.showUsagesDialog(workspacePanel.getMCreator(),
-						L10N.t("dialog.search_usages.type.resource.model"), refs);
+						L10N.t("dialog.search_usages.type.resource.animation"), refs);
 			}
 		});
 		addToolBarButton("common.delete_selected", UIRES.get("16px.delete"), e -> deleteCurrentlySelected());
