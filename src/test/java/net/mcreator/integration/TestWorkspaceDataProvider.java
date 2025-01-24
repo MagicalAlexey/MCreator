@@ -71,6 +71,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestWorkspaceDataProvider {
 
+	public static Collection<ModElementType<?>> getOrderedModElementTypesForTests(
+			GeneratorConfiguration generatorConfiguration) {
+		Set<ModElementType<?>> retval = new LinkedHashSet<>();
+
+		// We try to provide order so MET that depend on less of other MEs are first
+		// So later MEs can reference them, improving test coverage
+		retval.add(ModElementType.FUNCTION);
+		retval.add(ModElementType.DAMAGETYPE);
+		retval.add(ModElementType.GAMERULE);
+		retval.add(ModElementType.ENCHANTMENT);
+		retval.add(ModElementType.PARTICLE);
+		retval.add(ModElementType.TAB);
+		retval.add(ModElementType.PROJECTILE);
+		retval.add(ModElementType.GUI);
+		retval.add(ModElementType.ATTRIBUTE);
+		retval.add(ModElementType.POTIONEFFECT);
+
+		List<ModElementType<?>> supportedMETs = generatorConfiguration.getGeneratorStats().getSupportedModElementTypes();
+
+		// Remove METs not supported by the generator
+		retval.retainAll(supportedMETs);
+
+		// Add remaining types
+		retval.addAll(supportedMETs);
+		return retval;
+	}
+
 	public static List<GeneratableElement> getModElementExamplesFor(Workspace workspace, ModElementType<?> type,
 			boolean uiTest, Random random) {
 		List<GeneratableElement> generatableElements = new ArrayList<>();
@@ -154,17 +181,26 @@ public class TestWorkspaceDataProvider {
 			tag = new TagElement(TagType.BIOMES, "minecraft:test");
 			workspace.addTagElement(tag);
 			workspace.getTagElements().get(tag).add("minecraft:plains");
-			workspace.getTagElements().get(tag).add("~testmod:testbiome");
+			if (workspace.getGeneratorStats().getModElementTypeCoverageInfo().get(ModElementType.BIOME)
+					== GeneratorStats.CoverageStatus.FULL) {
+				workspace.getTagElements().get(tag).add("~test_mod:examplebiome_1");
+			}
 
 			tag = new TagElement(TagType.DAMAGE_TYPES, "minecraft:test");
 			workspace.addTagElement(tag);
-			workspace.getTagElements().get(tag).add("testmod:testdamage");
-			workspace.getTagElements().get(tag).add("~testmod:testdamage2");
+			if (workspace.getGeneratorStats().getModElementTypeCoverageInfo().get(ModElementType.DAMAGETYPE)
+					== GeneratorStats.CoverageStatus.FULL) {
+				workspace.getTagElements().get(tag).add("test_mod:exampledamagetype_1");
+				workspace.getTagElements().get(tag).add("~test_mod:exampledamagetype_2");
+			}
 
 			tag = new TagElement(TagType.ENCHANTMENTS, "minecraft:test");
 			workspace.addTagElement(tag);
-			workspace.getTagElements().get(tag).add("testmod:testenchantment");
-			workspace.getTagElements().get(tag).add("~testmod:testenchantment2");
+			if (workspace.getGeneratorStats().getModElementTypeCoverageInfo().get(ModElementType.ENCHANTMENT)
+					== GeneratorStats.CoverageStatus.FULL) {
+				workspace.getTagElements().get(tag).add("test_mod:exampleenchantment_1");
+				workspace.getTagElements().get(tag).add("~test_mod:exampleenchantment_2");
+			}
 		}
 
 		if (workspace.getGeneratorStats().getBaseCoverageInfo().get("variables")
@@ -280,11 +316,11 @@ public class TestWorkspaceDataProvider {
 
 		if (workspace.getFolderManager().getTexturesFolder(TextureType.ENTITY) != null) {
 			FileIO.writeImageToPNGFile((RenderedImage) imageIcon.getImage(),
-					workspace.getFolderManager().getTextureFile("entityTx0", TextureType.ENTITY));
+					workspace.getFolderManager().getTextureFile("entity_texture_0", TextureType.ENTITY));
 			FileIO.writeImageToPNGFile((RenderedImage) imageIcon.getImage(),
-					workspace.getFolderManager().getTextureFile("entityTx1", TextureType.ENTITY));
+					workspace.getFolderManager().getTextureFile("entity_texture_1", TextureType.ENTITY));
 			FileIO.writeImageToPNGFile((RenderedImage) imageIcon.getImage(),
-					workspace.getFolderManager().getTextureFile("entityTx2", TextureType.ENTITY));
+					workspace.getFolderManager().getTextureFile("entity_texture_2", TextureType.ENTITY));
 		}
 
 		if (workspace.getFolderManager().getTexturesFolder(TextureType.EFFECT) != null) {
@@ -852,16 +888,16 @@ public class TestWorkspaceDataProvider {
 			Armor armor = new Armor(modElement);
 			armor.enableHelmet = !_true;
 			armor.textureHelmet = new TextureHolder(modElement.getWorkspace(), "test");
-			armor.helmetModelTexture = emptyLists ? "From armor" : "entityTx0.png";
+			armor.helmetModelTexture = emptyLists ? "From armor" : "entity_texture_0.png";
 			armor.enableBody = !_true;
 			armor.textureBody = new TextureHolder(modElement.getWorkspace(), "test2");
-			armor.bodyModelTexture = emptyLists ? "From armor" : "entityTx0.png";
+			armor.bodyModelTexture = emptyLists ? "From armor" : "entity_texture_0.png";
 			armor.enableLeggings = !_true;
 			armor.textureLeggings = new TextureHolder(modElement.getWorkspace(), "test2");
-			armor.leggingsModelTexture = emptyLists ? "From armor" : "entityTx0.png";
+			armor.leggingsModelTexture = emptyLists ? "From armor" : "entity_texture_0.png";
 			armor.enableBoots = !_true;
 			armor.textureBoots = new TextureHolder(modElement.getWorkspace(), "test4");
-			armor.bootsModelTexture = emptyLists ? "From armor" : "entityTx0.png";
+			armor.bootsModelTexture = emptyLists ? "From armor" : "entity_texture_0.png";
 			armor.helmetItemRenderType = 0;
 			armor.helmetItemCustomModelName = "Normal";
 			armor.bodyItemRenderType = 0;
@@ -1218,8 +1254,6 @@ public class TestWorkspaceDataProvider {
 			potionEffect.mobEffectCategory = getRandomItem(random, new String[] { "NEUTRAL", "HARMFUL", "BENEFICIAL" });
 			potionEffect.renderStatusInHUD = _true;
 			potionEffect.renderStatusInInventory = _true;
-			potionEffect.isCuredByMilk = !_true;
-			potionEffect.isProtectedByTotem = !_true;
 			potionEffect.isCuredbyHoney = _true;
 			List<PotionEffect.AttributeModifierEntry> modifiers = new ArrayList<>();
 			if (!emptyLists) {
@@ -1576,6 +1610,7 @@ public class TestWorkspaceDataProvider {
 			particle.texture = new TextureHolder(modElement.getWorkspace(), "particle1");
 			particle.width = 2.3;
 			particle.frameDuration = 2;
+			particle.emissiveRendering = _true;
 			particle.height = 1.38;
 			particle.scale = new NumberProcedure(emptyLists ? null : "number1", 1.38);
 			particle.gravity = 12.3;
@@ -1587,7 +1622,7 @@ public class TestWorkspaceDataProvider {
 			particle.animate = _true;
 			particle.maxAge = 12;
 			particle.maxAgeDiff = emptyLists ? 0 : 15;
-			particle.renderType = new String[] { "OPAQUE", "OPAQUE", "TRANSLUCENT", "LIT" }[valueIndex];
+			particle.renderType = new String[] { "OPAQUE", "OPAQUE", "TRANSLUCENT", "TRANSLUCENT"}[valueIndex];
 			particle.additionalExpiryCondition = new Procedure("condition1");
 			return particle;
 		} else if (ModElementType.GAMERULE.equals(modElement.getType())) {
@@ -1621,8 +1656,8 @@ public class TestWorkspaceDataProvider {
 			profession.actionSound = new Sound(modElement.getWorkspace(),
 					getRandomItem(random, ElementUtil.getAllSounds(modElement.getWorkspace())));
 			profession.hat = getRandomString(random, Arrays.asList("None", "Partial", "Full"));
-			profession.professionTextureFile = "entityTx0.png";
-			profession.zombifiedProfessionTextureFile = "entityTx1.png";
+			profession.professionTextureFile = "entity_texture_0.png";
+			profession.zombifiedProfessionTextureFile = "entity_texture_1.png";
 			return profession;
 		} else if (ModElementType.VILLAGERTRADE.equals(modElement.getType())) {
 			VillagerTrade villagerTrade = new VillagerTrade(modElement);
@@ -1754,7 +1789,7 @@ public class TestWorkspaceDataProvider {
 		LivingEntity livingEntity = new LivingEntity(modElement);
 		livingEntity.mobName = modElement.getName();
 		livingEntity.mobLabel = "mod label " + StringUtils.machineToReadableName(modElement.getName());
-		livingEntity.mobModelTexture = "entityTx1.png";
+		livingEntity.mobModelTexture = "entity_texture_1.png";
 		livingEntity.transparentModelCondition = new LogicProcedure(emptyLists ? "condition1" : null, _true);
 		livingEntity.isShakingCondition = new LogicProcedure(emptyLists ? "condition2" : null, !_true);
 		livingEntity.solidBoundingBox = new LogicProcedure(emptyLists ? "condition3" : null, _true);
@@ -1902,7 +1937,7 @@ public class TestWorkspaceDataProvider {
 			LivingEntity.ModelLayerEntry modelLayer = new LivingEntity.ModelLayerEntry();
 			modelLayer.setWorkspace(modElement.getWorkspace());
 			modelLayer.model = "Default";
-			modelLayer.texture = "entityTx2.png";
+			modelLayer.texture = "entity_texture_2.png";
 			modelLayer.disableHurtOverlay = false;
 			modelLayer.glow = true;
 			modelLayer.condition = null;
@@ -1910,7 +1945,7 @@ public class TestWorkspaceDataProvider {
 			modelLayer = new LivingEntity.ModelLayerEntry();
 			modelLayer.setWorkspace(modElement.getWorkspace());
 			modelLayer.model = "Default";
-			modelLayer.texture = "entityTx0.png";
+			modelLayer.texture = "entity_texture_0.png";
 			modelLayer.disableHurtOverlay = false;
 			modelLayer.glow = false;
 			modelLayer.condition = new Procedure("condition1");
@@ -1918,7 +1953,7 @@ public class TestWorkspaceDataProvider {
 			modelLayer = new LivingEntity.ModelLayerEntry();
 			modelLayer.setWorkspace(modElement.getWorkspace());
 			modelLayer.model = "Default";
-			modelLayer.texture = "entityTx2.png";
+			modelLayer.texture = "entity_texture_2.png";
 			modelLayer.disableHurtOverlay = true;
 			modelLayer.glow = true;
 			modelLayer.condition = null;

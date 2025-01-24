@@ -71,12 +71,12 @@ public class AddCommonTagsDialog {
 
 		//@formatter:off
 		callables.add(addTag(mcreator, blockTags, "dirt", "minecraft", TagType.BLOCKS, true));
+		callables.add(addTag(mcreator, blockTags, "sand", "minecraft", TagType.BLOCKS, true));
 		callables.add(addTag(mcreator, blockTags, "logs", "minecraft", TagType.BLOCKS, true));
 		callables.add(addTag(mcreator, blockTags, "fences", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "wooden_fences", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "walls", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "small_flowers", "minecraft", TagType.BLOCKS, false));
-		callables.add(addTag(mcreator, blockTags, "tall_flowers", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "bee_growables", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "valid_spawn", "minecraft", TagType.BLOCKS, false));
 		callables.add(addTag(mcreator, blockTags, "impermeable", "minecraft", TagType.BLOCKS, false));
@@ -91,17 +91,19 @@ public class AddCommonTagsDialog {
 
 		callables.add(addTag(mcreator, itemTags, "arrows", "minecraft", TagType.ITEMS, false));
 		callables.add(addTag(mcreator, itemTags, "planks", "minecraft", TagType.ITEMS, false));
-		callables.add(addTag(mcreator, itemTags, "flowers", "minecraft", TagType.ITEMS, false));
-		callables.add(addTag(mcreator, itemTags, "small_flowers", "minecraft", TagType.ITEMS, false));
-		callables.add(addTag(mcreator, itemTags, "small_flowers", "minecraft", TagType.ITEMS, false));
+		callables.add(addTag(mcreator, itemTags, "meat", "minecraft", TagType.ITEMS, false));
 		callables.add(addTag(mcreator, itemTags, "enchantable/weapon", "minecraft", TagType.ITEMS, false));
 		callables.add(addTag(mcreator, itemTags, "enchantable/mining", "minecraft", TagType.ITEMS, false));
+		callables.add(addTag(mcreator, itemTags, "enchantable/equippable", "minecraft", TagType.ITEMS, false));
+		callables.add(addTag(mcreator, itemTags, "enchantable/bow", "minecraft", TagType.ITEMS, false));
 
 		callables.add(addTag(mcreator, entityTags, "arrows", "minecraft", TagType.ENTITIES, false));
 		callables.add(addTag(mcreator, entityTags, "impact_projectiles", "minecraft", TagType.ENTITIES, false));
 		callables.add(addTag(mcreator, entityTags, "beehive_inhabitors", "minecraft", TagType.ENTITIES, false));
 		callables.add(addTag(mcreator, entityTags, "skeletons", "minecraft", TagType.ENTITIES, false));
 		callables.add(addTag(mcreator, entityTags, "powder_snow_walkable_mobs", "minecraft", TagType.ENTITIES, false));
+		callables.add(addTag(mcreator, entityTags, "undead", "minecraft", TagType.ENTITIES, false));
+		callables.add(addTag(mcreator, entityTags, "illager", "minecraft", TagType.ENTITIES, false));
 
 		callables.add(addTag(mcreator, biomeTags, "is_overworld", "minecraft", TagType.BIOMES, true));
 		callables.add(addTag(mcreator, biomeTags, "is_nether", "minecraft", TagType.BIOMES, false));
@@ -112,6 +114,7 @@ public class AddCommonTagsDialog {
 		callables.add(addTag(mcreator, biomeTags, "is_hill", "minecraft", TagType.BIOMES, false));
 		callables.add(addTag(mcreator, biomeTags, "is_forest", "minecraft", TagType.BIOMES, false));
 		callables.add(addTag(mcreator, biomeTags, "is_savanna", "minecraft", TagType.BIOMES, false));
+		callables.add(addTag(mcreator, biomeTags, "without_wandering_trader_spawns", "minecraft", TagType.BIOMES, false));
 
 		callables.add(addTag(mcreator, functionTags, "tick", "minecraft", TagType.FUNCTIONS, false));
 		callables.add(addTag(mcreator, functionTags, "load", "minecraft", TagType.FUNCTIONS, false));
@@ -131,6 +134,7 @@ public class AddCommonTagsDialog {
 		callables.add(addTag(mcreator, enchantmentTags, "curse", "minecraft", TagType.ENCHANTMENTS, false));
 		callables.add(addTag(mcreator, enchantmentTags, "treasure", "minecraft", TagType.ENCHANTMENTS, false));
 		callables.add(addTag(mcreator, enchantmentTags, "tradeable", "minecraft", TagType.ENCHANTMENTS, false));
+		callables.add(addTag(mcreator, enchantmentTags, "smelts_loot", "minecraft", TagType.ENCHANTMENTS, false));
 		//@formatter:on
 
 		ok.addActionListener(e -> {

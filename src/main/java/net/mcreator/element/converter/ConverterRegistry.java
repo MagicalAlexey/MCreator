@@ -52,8 +52,9 @@ import net.mcreator.element.converter.v2024_1.TagModElementConverter;
 import net.mcreator.element.converter.v2024_2.*;
 import net.mcreator.element.converter.v2024_3.EnchantmentDefinitionConverter;
 import net.mcreator.element.converter.v2024_3.PlantTypeProcedureRemover;
-import net.mcreator.element.converter.v2024_3.WorldDependencyAdder;
 import net.mcreator.element.converter.v2024_4.*;
+import net.mcreator.element.converter.v2025_1.FeatureCarvingMaskRemover;
+import net.mcreator.element.converter.v2025_1.ParticleLitRemover;
 
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +141,8 @@ public class ConverterRegistry {
 			new PaintingFieldsFixer()
 		));
 		put(ModElementType.PARTICLE, List.of(
-			new ParticleTextureConverter()
+			new ParticleTextureConverter(),
+			new ParticleLitRemover()
 		));
 		put(ModElementType.PLANT, List.of(
 			new PlantLuminanceFixer(),
@@ -180,7 +182,8 @@ public class ConverterRegistry {
 			new CallProcedureAtBlockConverter(),
 			new HarvestLevelProceduresRemover(),
 			new PlantTypeProcedureRemover(),
-			new WorldDependencyAdder()
+			new net.mcreator.element.converter.v2024_3.WorldDependencyAdder(),
+			new net.mcreator.element.converter.v2025_1.WorldDependencyAdder()
 		));
 		put(ModElementType.RECIPE, List.of(
 			new RecipeTypeConverter()
@@ -195,7 +198,8 @@ public class ConverterRegistry {
 		put(ModElementType.FEATURE, List.of(
 			new HugeFungusFeatureConverter(),
 			new FeatureDimensionRestrictionConverter(),
-			new FeatureBlockstateSelectorConverter()
+			new FeatureBlockstateSelectorConverter(),
+			new FeatureCarvingMaskRemover()
 		));
 		put(ModElementType.STRUCTURE, List.of(
 			new StructureToFeatureConverter(),

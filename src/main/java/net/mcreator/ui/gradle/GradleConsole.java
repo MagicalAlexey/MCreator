@@ -412,9 +412,14 @@ public class GradleConsole extends JPanel {
 
 		ConfigurableLauncher<?> task;
 		if (isGradleSync) {
-			task = GradleUtils.getGradleSyncLauncher(projectConnection);
+			String extraSyncTask = ref.getGeneratorConfiguration().getGradleTaskFor("sync_task");
+			if (extraSyncTask != null) {
+				task = GradleUtils.getGradleSyncLauncher(ref.getGeneratorConfiguration(), projectConnection, extraSyncTask);
+			} else {
+				task = GradleUtils.getGradleSyncLauncher(ref.getGeneratorConfiguration(), projectConnection);
+			}
 		} else {
-			task = GradleUtils.getGradleTaskLauncher(projectConnection, commands);
+			task = GradleUtils.getGradleTaskLauncher(ref.getGeneratorConfiguration(), projectConnection, commands);
 
 			Map<String, String> environment = GradleUtils.getEnvironment(java_home);
 
@@ -499,6 +504,8 @@ public class GradleConsole extends JPanel {
 			if (line.contains("#sec:command_line_warnings"))
 				return;
 			if (line.startsWith("*** Started working on "))
+				return;
+			if (line.contains("Problems report is available at:"))
 				return;
 
 			if (line.startsWith("WARNING: This project is configured to use the official obfuscation")) {
