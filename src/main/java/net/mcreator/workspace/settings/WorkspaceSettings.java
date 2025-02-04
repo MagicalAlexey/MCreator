@@ -200,16 +200,10 @@ import java.util.stream.Stream;
 		return modName;
 	}
 
-	public String getVersion() {
+	public String getCleanVersion() {
 		return version;
 	}
 
-	public String getCleanVersion() {
-		String cleanVersion = cleanVersionPattern.matcher(version).replaceAll("");
-		if (!cleanVersion.isEmpty())
-			return cleanVersion;
-		return "0.0.0.0";
-	}
 
 	public String getDescription() {
 		return description;
@@ -267,19 +261,6 @@ import java.util.stream.Stream;
 				|| !websiteURL.contains("."))
 			return MCreatorApplication.SERVER_DOMAIN;
 		return websiteURL;
-	}
-
-	public int[] get3DigitVersion() {
-		int[] ver3 = { 0, 0, 0 };
-		try {
-			String[] parts = version.split("\\.");
-			for (int i = 0; i < Math.min(parts.length, ver3.length); i++) {
-				String digit = parts[i].replaceAll("[^\\d]", "");
-				ver3[i] = Integer.parseInt(digit);
-			}
-		} catch (Exception ignored) {
-		}
-		return ver3;
 	}
 
 }

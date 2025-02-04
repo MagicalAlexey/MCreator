@@ -64,7 +64,7 @@ public class ExportWorkspaceForDistAction extends GradleAction {
 				}
 
 				String suggestedFileName = actionRegistry.getMCreator().getWorkspaceSettings().getModID() + "-"
-						+ actionRegistry.getMCreator().getWorkspaceSettings().getVersion() + "-"
+						+ actionRegistry.getMCreator().getWorkspaceSettings().getCleanVersion() + "-"
 						+ actionRegistry.getMCreator().getWorkspaceSettings().getCurrentGenerator() + "."
 						+ exportExtension;
 
