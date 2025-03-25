@@ -199,7 +199,7 @@ import net.minecraft.client.model.Model;
 	public static class Chestplate extends ${name}Item {
 
 		public Chestplate(Item.Properties properties) {
-			super(roperties<#if data.bodyImmuneToFire>.fireResistant()</#if>.humanoidArmor(ARMOR_MATERIAL,ArmorType.CHESTPLATE));
+			super(properties<#if data.bodyImmuneToFire>.fireResistant()</#if>.humanoidArmor(ARMOR_MATERIAL,ArmorType.CHESTPLATE));
 		}
 
 		<@addSpecialInformation data.bodySpecialInformation, "item." + modid + "." + registryname + "_chestplate"/>
