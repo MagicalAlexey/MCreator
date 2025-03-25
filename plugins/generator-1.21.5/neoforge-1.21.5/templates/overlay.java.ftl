@@ -63,12 +63,6 @@ package ${package}.client.screens;
         }
 
         <#if data.hasTextures()>
-            RenderSystem.disableDepthTest();
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.setShader(CoreShaders.POSITION_TEX);
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             RenderSystem.setShaderColor(1, 1, 1, 1);
         </#if>
 
@@ -122,10 +116,6 @@ package ${package}.client.screens;
         }
 
         <#if data.hasTextures()>
-            RenderSystem.depthMask(true);
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.enableDepthTest();
-            RenderSystem.disableBlend();
             RenderSystem.setShaderColor(1, 1, 1, 1);
         </#if>
     <#if generator.map(data.overlayTarget, "screens") != "Ingame">

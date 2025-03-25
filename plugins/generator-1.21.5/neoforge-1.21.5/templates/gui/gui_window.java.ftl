@@ -127,8 +127,6 @@ public class ${name}Screen extends AbstractContainerScreen<${name}Menu> {
 
 	@Override protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
 
 		<#if data.renderBgLayer>
 			guiGraphics.blit(RenderType::guiTextured, texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
@@ -157,7 +155,6 @@ public class ${name}Screen extends AbstractContainerScreen<${name}Menu> {
 			<#if hasProcedure(component.displayCondition)>}</#if>
 		</#list>
 
-		RenderSystem.disableBlend();
 	}
 
 	@Override public boolean keyPressed(int key, int b, int c) {
