@@ -107,11 +107,11 @@
 
 <#macro onEntityHitWith procedure="" hurtStack=false hurtStackAmount=2>
 <#if hasProcedure(procedure) || hurtStack>
-@Override public boolean hurtEnemy(ItemStack itemstack, LivingEntity entity, LivingEntity sourceentity) {
+@Override public void hurtEnemy(ItemStack itemstack, LivingEntity entity, LivingEntity sourceentity) {
 	<#if hurtStack>
 		itemstack.hurtAndBreak(${hurtStackAmount}, entity, LivingEntity.getSlotForHand(entity.getUsedItemHand()));
 	<#else>
-		boolean retval = super.hurtEnemy(itemstack, entity, sourceentity);
+		super.hurtEnemy(itemstack, entity, sourceentity);
 	</#if>
 	<#if hasProcedure(procedure)>
 		<@procedureCode procedure, {
@@ -124,7 +124,6 @@
 			"itemstack": "itemstack"
 		}/>
 	</#if>
-	return <#if hurtStack>true<#else>retval</#if>;
 }
 </#if>
 </#macro>
