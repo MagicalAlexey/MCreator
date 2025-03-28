@@ -643,7 +643,7 @@ public class ${name}Block extends
 					world.updateNeighbourForOutputSignal(pos, this);
 				}
 
-				super.onRemove(state, world, pos, isMoving);
+				super.affectNeighborsAfterRemoval(state, world, pos, isMoving);
 		}
 	    </#if>
 
