@@ -42,8 +42,8 @@
 <#-- Item-related triggers -->
 <#macro addSpecialInformation procedure="" translationKeyHeader="" isBlock=false>
 	<#if procedure?has_content && (hasProcedure(procedure) || !procedure.getFixedValue().isEmpty())>
-		@Override @OnlyIn(Dist.CLIENT) public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, context, list, flag);
+		@Override @OnlyIn(Dist.CLIENT) public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, display, list, flag);
 		<#if hasProcedure(procedure)>
 			Entity entity = itemstack.getEntityRepresentation() != null ? itemstack.getEntityRepresentation() : Minecraft.getInstance().player;
 			String hoverText = <@procedureCode procedure, {
@@ -56,16 +56,16 @@
 			}, false/>;
 			if (hoverText != null) {
 				for (String line : hoverText.split("\n")) {
-					list.add(Component.literal(line));
+					list.accept(Component.literal(line));
 				}
 			}
 		<#elseif translationKeyHeader?has_content>
 			<#list procedure.getFixedValue() as entry>
-				list.add(Component.translatable("${translationKeyHeader}.description_${entry?index}"));
+				list.accept(Component.translatable("${translationKeyHeader}.description_${entry?index}"));
 			</#list>
 		<#else>
 			<#list procedure.getFixedValue() as entry>
-				list.add(Component.literal("${JavaConventions.escapeStringForJava(entry)}"));
+				list.accept(Component.literal("${JavaConventions.escapeStringForJava(entry)}"));
 			</#list>
 		</#if>
 		}
