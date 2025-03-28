@@ -472,11 +472,11 @@ public class ${name}Entity extends ${extendsClass} <#if data.ranged>implements R
 		<#list data.entityDataEntries as entry>
 			if (compound.contains("Data${entry.property().getName()}"))
 				<#if entry.value().getClass().getSimpleName() == "Integer">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getInt("Data${entry.property().getName()}"));
+				this.entityData.set(DATA_${entry.property().getName()}, compound.getIntOr("Data${entry.property().getName()}", 0));
 				<#elseif entry.value().getClass().getSimpleName() == "Boolean">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getBoolean("Data${entry.property().getName()}"));
+				this.entityData.set(DATA_${entry.property().getName()}, compound.getBooleanOr("Data${entry.property().getName()}", false));
 				<#elseif entry.value().getClass().getSimpleName() == "String">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getString("Data${entry.property().getName()}"));
+				this.entityData.set(DATA_${entry.property().getName()}, compound.getStringOr("Data${entry.property().getName()}", ""));
 				</#if>
 		</#list>
 		<#if data.guiBoundTo?has_content>
