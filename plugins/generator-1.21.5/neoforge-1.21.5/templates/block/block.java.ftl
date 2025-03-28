@@ -636,16 +636,14 @@ public class ${name}Block extends
 		}
 
 	    <#if data.inventoryDropWhenDestroyed>
-		@Override public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-			if (state.getBlock() != newState.getBlock()) {
+		@Override public void affectNeighborsAfterRemoval(BlockState state, Level world, BlockPos pos, boolean isMoving) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
 				if (blockEntity instanceof ${name}BlockEntity be) {
 					Containers.dropContents(world, pos, be);
 					world.updateNeighbourForOutputSignal(pos, this);
 				}
 
-				super.onRemove(state, world, pos, newState, isMoving);
-			}
+				super.onRemove(state, world, pos, isMoving);
 		}
 	    </#if>
 
