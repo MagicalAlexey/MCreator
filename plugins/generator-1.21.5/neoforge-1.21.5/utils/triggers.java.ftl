@@ -147,8 +147,8 @@
 
 <#macro onItemTick inUseProcedure="" inInvProcedure="">
 <#if hasProcedure(inUseProcedure) || hasProcedure(inInvProcedure)>
-@Override public void inventoryTick(ItemStack itemstack, Level world, Entity entity, int slot, boolean selected) {
-	super.inventoryTick(itemstack, world, entity, slot, selected);
+@Override public void inventoryTick(ItemStack itemstack, ServerLevel world, Entity entity, EquipmentSlot slot) {
+	super.inventoryTick(itemstack, world, entity, slot);
 	<#if hasProcedure(inUseProcedure)>
 	if (selected)
 		<@procedureCode inUseProcedure, {
