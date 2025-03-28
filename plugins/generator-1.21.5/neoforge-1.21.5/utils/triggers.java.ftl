@@ -4,9 +4,9 @@
 <#macro onArmorTick procedure="">
 <#if hasProcedure(procedure)>
 <#-- ideally we would use inventoryTick for slot [36, 39], however slot number does not seem to work in NF 1.20.4 -->
-@Override public void inventoryTick(ItemStack itemstack, Level world, Entity entity, int slot, boolean selected) {
-	super.inventoryTick(itemstack, world, entity, slot, selected);
-	if (entity instanceof Player player && Iterables.contains(player.getArmorSlots(), itemstack)) {
+@Override public void inventoryTick(ItemStack itemstack, ServerLevel world, Entity entity, EquipmentSlot slot) {
+	super.inventoryTick(itemstack, world, entity, slot);
+	if (entity instanceof Player player && Iterables.contains(Collections.singleton(player.getArmorValue()), itemstack)) {
 		<@procedureCode procedure, {
 			"x": "entity.getX()",
 			"y": "entity.getY()",
