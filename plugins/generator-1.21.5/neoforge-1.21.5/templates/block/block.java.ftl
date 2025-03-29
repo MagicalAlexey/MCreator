@@ -107,6 +107,10 @@ public class ${name}Block extends
 	public MapCodec<${name}Block> codec() {
 		return CODEC;
 	}
+    @Override
+       public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+          return 0;
+    }
 	</#if>
 
 	<#macro blockProperties>
@@ -206,6 +210,8 @@ public class ${name}Block extends
 				super(BlockSetType.IRON, <@blockProperties/>);
 			<#elseif data.material.getUnmappedValue() == "WOOD">
 				super(BlockSetType.OAK, <@blockProperties/>);
+			<#elseif data.material.getUnmappedValue() == "Leaves">
+				super(1f, <@blockProperties/>);
 			<#else>
 				super(BlockSetType.STONE, <@blockProperties/>);
 			</#if>
@@ -409,7 +415,6 @@ public class ${name}Block extends
 		}
 		</#if>
 	</#if>
-
 	<#if hasProcedure(data.placingCondition)>
 	@Override public boolean canSurvive(BlockState blockstate, LevelReader worldIn, BlockPos pos) {
 		if (worldIn instanceof LevelAccessor world) {
@@ -636,7 +641,7 @@ public class ${name}Block extends
 		}
 
 	    <#if data.inventoryDropWhenDestroyed>
-		@Override public void affectNeighborsAfterRemoval(BlockState state, Level world, BlockPos pos, boolean isMoving) {
+		@Override public void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean isMoving) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
 				if (blockEntity instanceof ${name}BlockEntity be) {
 					Containers.dropContents(world, pos, be);
