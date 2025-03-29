@@ -110,9 +110,6 @@ public class ${name}Block extends
 	</#if>
 
 	<#macro blockProperties>
-	    <#if !data.blockBase?has_content || data.blockBase == "Leaves">
-	    1f,
-	    </#if>
 		properties
 		${data.material}
 		<#if generator.map(data.colorOnMap, "mapcolors") != "DEFAULT">
@@ -258,13 +255,6 @@ public class ${name}Block extends
 	}
 	</#if>
 
-	<#if data.hasGravity>
-		@Override
-    	public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-    		return 0;
-    	}
-    </if>
-
 	<#if data.connectedSides>
 	@Override public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
 		return adjacentBlockState.getBlock() == this ? true : super.skipRendering(state, adjacentBlockState, side);
@@ -282,19 +272,6 @@ public class ${name}Block extends
 		return ${data.lightOpacity};
 	}
 	</#if>
-
-    <#if !data.blockBase?has_content || data.blockBase == "Leaves">
-
-    	@Override
-    	public MapCodec<? extends LeavesBlock> codec() {
-    		return null;
-    	}
-
-	@Override
-	protected void spawnFallingLeavesParticle(Level level, BlockPos blockPos, RandomSource randomSource) {
-
-	}
-    </if>
 
 	<#if data.hasTransparency && !data.blockBase?has_content>
 	@Override public VoxelShape getVisualShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
@@ -432,6 +409,7 @@ public class ${name}Block extends
 		}
 		</#if>
 	</#if>
+
 	<#if hasProcedure(data.placingCondition)>
 	@Override public boolean canSurvive(BlockState blockstate, LevelReader worldIn, BlockPos pos) {
 		if (worldIn instanceof LevelAccessor world) {
@@ -658,7 +636,7 @@ public class ${name}Block extends
 		}
 
 	    <#if data.inventoryDropWhenDestroyed>
-		@Override public void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean isMoving) {
+		@Override public void affectNeighborsAfterRemoval(BlockState state, Level world, BlockPos pos, boolean isMoving) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
 				if (blockEntity instanceof ${name}BlockEntity be) {
 					Containers.dropContents(world, pos, be);
