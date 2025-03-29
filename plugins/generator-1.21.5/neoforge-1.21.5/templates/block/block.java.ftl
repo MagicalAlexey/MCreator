@@ -113,7 +113,23 @@ public class ${name}Block extends
     }
 	</#if>
 
+	    <#if data.blockBase?has_content && data.blockBase == "Leaves">
+
+        	@Override
+        	public MapCodec<? extends LeavesBlock> codec() {
+        		return null;
+        	}
+
+    	@Override
+    	protected void spawnFallingLeavesParticle(Level level, BlockPos blockPos, RandomSource randomSource) {
+
+    	}
+        </#if>
+
 	<#macro blockProperties>
+		<#if data.blockBase?has_content && data.blockBase == "Leaves">
+		1f,
+		</#if>
 		properties
 		${data.material}
 		<#if generator.map(data.colorOnMap, "mapcolors") != "DEFAULT">
@@ -210,8 +226,6 @@ public class ${name}Block extends
 				super(BlockSetType.IRON, <@blockProperties/>);
 			<#elseif data.material.getUnmappedValue() == "WOOD">
 				super(BlockSetType.OAK, <@blockProperties/>);
-			<#elseif data.material.getUnmappedValue() == "Leaves">
-				super(1f, <@blockProperties/>);
 			<#else>
 				super(BlockSetType.STONE, <@blockProperties/>);
 			</#if>
