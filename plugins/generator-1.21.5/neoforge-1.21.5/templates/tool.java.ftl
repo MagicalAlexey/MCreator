@@ -41,7 +41,7 @@ package ${package}.item;
 </#if>
 <#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade"
 		|| data.toolType == "Hoe" || data.toolType == "Shears" || data.toolType == "Shield" || data.toolType == "MultiTool">
-public class ${name}Item extends ${data.toolType?replace("Spade", " ")?replace("MultiTool", "")?replace("Pickaxe", "")?replace("Sword", "")?replace("Hoe", "")}Item {
+public class ${name}Item extends ${data.toolType?replace("Spade", " ")?replace("MultiTool", "")?replace("Pickaxe", "")?replace("Sword", "")?replace("Axe", "")?replace("Hoe", "")}Item {
 
 	<#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade" || data.toolType == "Hoe" || data.toolType == "MultiTool">
 	private static final ToolMaterial TOOL_MATERIAL = new ToolMaterial(
