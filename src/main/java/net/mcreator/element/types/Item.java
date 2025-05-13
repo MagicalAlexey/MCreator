@@ -50,6 +50,7 @@ import java.util.*;
 	public int renderType;
 	@TextureReference(TextureType.ITEM) public TextureHolder texture;
 	@Nonnull public String customModelName;
+	@TextureReference(TextureType.ITEM) public TextureHolder guiTexture;
 
 	@ModElementReference public Map<String, Procedure> customProperties;
 	@TextureReference(TextureType.ITEM) @ResourceReference("model") public List<StateEntry> states;
@@ -115,6 +116,8 @@ import java.util.*;
 	public int musicDiscLengthInTicks;
 	public int musicDiscAnalogOutput;
 
+	@ModElementReference public List<String> providedBannerPatterns;
+
 	private Item() {
 		this(null);
 	}
@@ -129,13 +132,19 @@ import java.util.*;
 
 		this.rarity = "COMMON";
 		this.inventorySize = 9;
-		this.inventoryStackSize = 64;
+		this.inventoryStackSize = 99;
 		this.saturation = 0.3f;
 		this.animation = "eat";
+
+		this.providedBannerPatterns = new ArrayList<>();
 	}
 
 	@Override public BufferedImage generateModElementPicture() {
-		return ImageUtils.resizeAndCrop(texture.getImage(TextureType.ITEM), 32);
+		if (hasGUITexture()) {
+			return ImageUtils.resizeAndCrop(guiTexture.getImage(TextureType.ITEM), 32);
+		} else {
+			return ImageUtils.resizeAndCrop(texture.getImage(TextureType.ITEM), 32);
+		}
 	}
 
 	@Override public Model getItemModel() {
@@ -168,6 +177,10 @@ import java.util.*;
 		return specialInformation;
 	}
 
+	public boolean hasGUITexture() {
+		return guiTexture != null && !guiTexture.isEmpty();
+	}
+
 	public boolean hasNormalModel() {
 		return decodeModelType(renderType) == Model.Type.BUILTIN && customModelName.equals("Normal");
 	}
@@ -180,6 +193,14 @@ import java.util.*;
 		return decodeModelType(renderType) == Model.Type.BUILTIN && customModelName.equals("Ranged item");
 	}
 
+	public boolean hasCustomJSONModel() {
+		return decodeModelType(renderType) == Model.Type.JSON;
+	}
+
+	public boolean hasCustomOBJModel() {
+		return decodeModelType(renderType) == Model.Type.OBJ;
+	}
+
 	public boolean hasInventory() {
 		return guiBoundTo != null && !guiBoundTo.isEmpty();
 	}
@@ -190,6 +211,21 @@ import java.util.*;
 
 	public boolean hasEatResultItem() {
 		return isFood && eatResultItem != null && !eatResultItem.isEmpty();
+	}
+
+	public boolean hasBannerPatterns() {
+		return !providedBannerPatterns.isEmpty();
+	}
+
+	public String getPatternDescription() {
+		if (!providedBannerPatterns.isEmpty()) {
+			List<String> names = providedBannerPatterns.stream()
+					.map(e -> getModElement().getWorkspace().getModElementByName(e))
+					.map(me -> me != null && me.getGeneratableElement() instanceof BannerPattern bp ? bp.name : "")
+					.toList();
+			return String.join(", ", names);
+		}
+		return "";
 	}
 
 	/**
@@ -266,21 +302,32 @@ import java.util.*;
 		public boolean hasRangedItemModel() {
 			return decodeModelType(renderType) == Model.Type.BUILTIN && customModelName.equals("Ranged item");
 		}
+
+		public boolean hasCustomJSONModel() {
+			return decodeModelType(renderType) == Model.Type.JSON;
+		}
+
+		public boolean hasCustomOBJModel() {
+			return decodeModelType(renderType) == Model.Type.OBJ;
+		}
+
 	}
 
 	public static int encodeModelType(Model.Type modelType) {
 		return switch (modelType) {
+			case BUILTIN -> 0;
 			case JSON -> 1;
 			case OBJ -> 2;
-			default -> 0;
+			default -> throw new IllegalStateException("Unexpected value: " + modelType);
 		};
 	}
 
 	public static Model.Type decodeModelType(int modelType) {
 		return switch (modelType) {
+			case 0 -> Model.Type.BUILTIN;
 			case 1 -> Model.Type.JSON;
 			case 2 -> Model.Type.OBJ;
-			default -> Model.Type.BUILTIN;
+			default -> throw new IllegalStateException("Unexpected value: " + modelType);
 		};
 	}
 

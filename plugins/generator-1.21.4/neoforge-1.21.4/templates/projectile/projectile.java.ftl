@@ -44,16 +44,25 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 
 	public ${name}Entity(EntityType<? extends ${name}Entity> type, Level world) {
 		super(type, world);
+		<#if data.disableGravity>
+		setNoGravity(true);
+		</#if>
 	}
 
 	public ${name}Entity(EntityType<? extends ${name}Entity> type, double x, double y, double z, Level world, @Nullable ItemStack firedFromWeapon) {
 		super(type, x, y, z, world, PROJECTILE_ITEM, firedFromWeapon);
+		<#if data.disableGravity>
+		setNoGravity(true);
+		</#if>
 		if (firedFromWeapon != null)
 			setKnockback(EnchantmentHelper.getItemEnchantmentLevel(world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.KNOCKBACK), firedFromWeapon));
 	}
 
 	public ${name}Entity(EntityType<? extends ${name}Entity> type, LivingEntity entity, Level world, @Nullable ItemStack firedFromWeapon) {
 		super(type, entity, world, PROJECTILE_ITEM, firedFromWeapon);
+		<#if data.disableGravity>
+		setNoGravity(true);
+		</#if>
 		if (firedFromWeapon != null)
 			setKnockback(EnchantmentHelper.getItemEnchantmentLevel(world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.KNOCKBACK), firedFromWeapon));
 	}
@@ -209,7 +218,7 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 	}
 
 	public static ${name}Entity shoot(Level world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
-		${name}Entity entityarrow = new ${name}Entity(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(), entity, world, null);
+		${name}Entity entityarrow = new ${name}Entity(${JavaModName}Entities.${REGISTRYNAME}.get(), entity, world, null);
 		entityarrow.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, power * 2, 0);
 		entityarrow.setSilent(true);
 		entityarrow.setCritArrow(${data.showParticles});
@@ -230,7 +239,7 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 	}
 
 	public static ${name}Entity shoot(LivingEntity entity, LivingEntity target) {
-		${name}Entity entityarrow = new ${name}Entity(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(), entity, entity.level(), null);
+		${name}Entity entityarrow = new ${name}Entity(${JavaModName}Entities.${REGISTRYNAME}.get(), entity, entity.level(), null);
 		double dx = target.getX() - entity.getX();
 		double dy = target.getY() + target.getEyeHeight() - 1.1;
 		double dz = target.getZ() - entity.getZ();
