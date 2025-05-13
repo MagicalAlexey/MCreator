@@ -41,7 +41,7 @@ package ${package}.item;
 </#if>
 <#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade"
 		|| data.toolType == "Hoe" || data.toolType == "Shears" || data.toolType == "Shield" || data.toolType == "MultiTool">
-public class ${name}Item extends ${data.toolType?replace("Spade", " ")?replace("MultiTool", "")?replace("Pickaxe", "")?replace("Sword", "")?replace("Axe", "")?replace("Hoe", "")}Item {
+public class ${name}Item extends ${data.toolType?replace("MultiTool", "")?replace("Pickaxe", "")?replace("Sword", "")?replace("Spade", "Shovel")}Item {
 
 	<#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade" || data.toolType == "Hoe" || data.toolType == "MultiTool">
 	private static final ToolMaterial TOOL_MATERIAL = new ToolMaterial(
@@ -61,29 +61,36 @@ public class ${name}Item extends ${data.toolType?replace("Spade", " ")?replace("
 	</#if>
 
 	public ${name}Item (Item.Properties properties) {
-		super(properties
+		super(
 			<#if data.toolType == "Pickaxe">
+			properties
 			.pickaxe(
 			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f)
 			</#if>
 			<#if data.toolType == "Axe">
-			.axe(
-			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f)
+			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f, properties
 			</#if>
 			<#if data.toolType == "Sword">
+			properties
 			.sword(
 			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f)
 			</#if>
 			<#if data.toolType == "Spade">
-			.shovel(
-			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f)
+			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f, properties
 			</#if>
 			<#if data.toolType == "Hoe">
-			.hoe(
-			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f)
+			TOOL_MATERIAL, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f, properties
 			</#if>
 			<#if data.toolType == "MultiTool">
+			properties
 			.tool(TOOL_MATERIAL, BlockTags.MINEABLE_WITH_PICKAXE, ${data.damageVsEntity - 1}f, ${data.attackSpeed - 4}f, 1f)
+			</#if>
+			<#if data.toolType == "Shield">
+			properties
+			.component(DataComponents.BLOCKS_ATTACKS, createShieldBlockingComponent())
+			</#if>
+			<#if data.toolType == "Shears">
+			properties
 			</#if>
 				<#if (data.usageCount != 0) && (data.toolType == "Shears" || data.toolType == "Shield")>
 				.durability(${data.usageCount})
@@ -107,6 +114,31 @@ public class ${name}Item extends ${data.toolType?replace("Spade", " ")?replace("
 				</#if>
 		);
 	}
+
+			<#if data.toolType == "Shield">
+	private static BlocksAttacks createShieldBlockingComponent() {
+		return new BlocksAttacks(
+				1.2f,
+				0.5f,
+				List.of(
+						new BlocksAttacks.DamageReduction(
+								90.0f,
+								Optional.empty(),
+								0.0f,
+								1.0f
+						)
+				),
+				new BlocksAttacks.ItemDamageFunction(
+						4.0f,
+						1.0f,
+						1.0f
+				),
+				Optional.of(DamageTypeTags.BYPASSES_SHIELD),
+				Optional.of(SoundEvents.SHIELD_BLOCK),
+				Optional.of(SoundEvents.SHIELD_BREAK)
+		);
+	}
+			</#if>
 
 	<#if (data.usageCount == 0) && (data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade" || data.toolType == "Hoe" || data.toolType == "MultiTool")>
 	@SubscribeEvent public static void handleToolDamage(ModifyDefaultComponentsEvent event) {
