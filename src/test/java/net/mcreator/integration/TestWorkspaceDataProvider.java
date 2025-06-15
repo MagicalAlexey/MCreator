@@ -1108,9 +1108,9 @@ public class TestWorkspaceDataProvider {
 			plant.jumpFactor = 17.732;
 			plant.canBePlacedOn = new ArrayList<>();
 			if (!emptyLists) {
-				plant.canBePlacedOn.addAll(
-						blocksAndTags.stream().skip(_true ? 0 : ((blocks.size() / 4) * valueIndex)).limit(blocks.size() / 4)
-								.map(e -> new MItemBlock(modElement.getWorkspace(), e.getName())).toList());
+				plant.canBePlacedOn.addAll(blocksAndTags.stream().skip(_true ? 0 : ((blocks.size() / 4) * valueIndex))
+						.limit(blocks.size() / 4).map(e -> new MItemBlock(modElement.getWorkspace(), e.getName()))
+						.toList());
 				plant.canBePlacedOn.add(new MItemBlock(modElement.getWorkspace(), "TAG:walls"));
 			}
 			plant.restrictionBiomes = new ArrayList<>();
@@ -2084,6 +2084,16 @@ public class TestWorkspaceDataProvider {
 				livingEntity.animations.add(animation);
 			}
 		}
+		livingEntity.sensitiveToVibration = _true;
+		livingEntity.vibrationalEvents = new ArrayList<>();
+		if (!emptyLists) {
+			livingEntity.vibrationalEvents.addAll(ElementUtil.loadAllGameEvents().stream()
+					.map(e -> new GameEventEntry(modElement.getWorkspace(), e.getName())).toList());
+			livingEntity.vibrationalEvents.add(new GameEventEntry(modElement.getWorkspace(), "#allay_can_listen"));
+		}
+		livingEntity.vibrationSensitivityRadius = new NumberProcedure(emptyLists ? null : "number1", 11);
+		livingEntity.canReceiveVibrationCondition = new Procedure("condition1");
+		livingEntity.onReceivedVibration = new Procedure("procedure1");
 		return livingEntity;
 	}
 
@@ -2193,10 +2203,10 @@ public class TestWorkspaceDataProvider {
 					getRandomMCItem(random, blocksAndItemsNoAir).getName());
 			recipe.recipeSlots = recipeSlots;
 
-			recipe.unlockingItems = new ArrayList<>(blocksAndItemsAndTags.stream()
-					.skip(blocksAndItemsAndTags.size() / 4)
-					.limit(blocksAndItemsAndTags.size() / 64)
-					.map(e -> new MItemBlock(modElement.getWorkspace(), e.getName())).toList());
+			recipe.unlockingItems = new ArrayList<>(
+					blocksAndItemsAndTags.stream().skip(blocksAndItemsAndTags.size() / 4)
+							.limit(blocksAndItemsAndTags.size() / 64)
+							.map(e -> new MItemBlock(modElement.getWorkspace(), e.getName())).toList());
 		}
 		case "Smelting" -> {
 			recipe.smeltingInputStack = new MItemBlock(modElement.getWorkspace(),
@@ -2252,10 +2262,10 @@ public class TestWorkspaceDataProvider {
 			recipe.smithingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsNoAir).getName());
 
-			recipe.unlockingItems = new ArrayList<>(blocksAndItemsAndTags.stream()
-					.skip(blocksAndItemsAndTags.size() / 4)
-					.limit(blocksAndItemsAndTags.size() / 64)
-					.map(e -> new MItemBlock(modElement.getWorkspace(), e.getName())).toList());
+			recipe.unlockingItems = new ArrayList<>(
+					blocksAndItemsAndTags.stream().skip(blocksAndItemsAndTags.size() / 4)
+							.limit(blocksAndItemsAndTags.size() / 64)
+							.map(e -> new MItemBlock(modElement.getWorkspace(), e.getName())).toList());
 		}
 		case "Brewing" -> {
 			recipe.brewingInputStack = new MItemBlock(modElement.getWorkspace(), getRandomMCItem(random,
