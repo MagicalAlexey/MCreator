@@ -1,0 +1,34 @@
+defaultvalue: ItemStack.EMPTY
+scopes:
+  local:
+    init: ${var.getType().getJavaType(generator.getWorkspace())} ${var.getName()} = ${var.getType().getDefaultValue(generator.getWorkspace())};
+    get: /*@ItemStack*/${name}
+    set: <#include "mcitems.ftl"> ${name} = ${mappedMCItemToItemStackCode(value, 1)}.copy();
+  global_session:
+    init: public static ItemStack ${var.getName()} = ItemStack.EMPTY;
+    get: /*@ItemStack*/${JavaModName}Variables.${name}
+    set: <#include "mcitems.ftl"> ${JavaModName}Variables.${name} = ${mappedMCItemToItemStackCode(value, 1)}.copy();
+  player_lifetime:
+    init: public ItemStack ${var.getName()} = ItemStack.EMPTY;
+    read:  ${var.getName()} = getItemStack(nbt, "${var.getName()}", lookupProvider);
+    write: putItemStack(nbt, "${var.getName()}", ${var.getName()}, lookupProvider);
+    get: /*@ItemStack*/${entity}.getData(${JavaModName}Variables.PLAYER_VARIABLES).${name}
+    set: |
+      <#include "mcitems.ftl">
+      {
+        ${JavaModName}Variables.PlayerVariables _vars = ${entity}.getData(${JavaModName}Variables.PLAYER_VARIABLES);
+        _vars.${name} = ${mappedMCItemToItemStackCode(value, 1)}.copy();
+        _vars.syncPlayerVariables(${entity});
+      }
+  player_persistent:
+    init: public ItemStack ${var.getName()} = ItemStack.EMPTY;
+    read: ${var.getName()} = getItemStack(nbt, "${var.getName()}", lookupProvider);
+    write: putItemStack(nbt, "${var.getName()}", ${var.getName()}, lookupProvider);
+    get: /*@ItemStack*/${entity}.getData(${JavaModName}Variables.PLAYER_VARIABLES).${name}
+    set: |
+      <#include "mcitems.ftl">
+      {
+        ${JavaModName}Variables.PlayerVariables _vars = ${entity}.getData(${JavaModName}Variables.PLAYER_VARIABLES);
+        _vars.${name} = ${mappedMCItemToItemStackCode(value, 1)}.copy();
+        _vars.syncPlayerVariables(${entity});
+      }
