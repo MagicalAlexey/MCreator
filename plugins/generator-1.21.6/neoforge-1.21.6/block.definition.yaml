@@ -490,3 +490,5 @@ tags:
       - sensitiveToVibration
       - "${data.vibrationalEvents?has_content}"
     entryprovider: data.getVibrationalEvents()
+
+field_exclusions: [sensitiveToVibration,vibrationalEvents, vibrationSensitivityRadius, canReceiveVibrationCondition, onReceivedVibration]

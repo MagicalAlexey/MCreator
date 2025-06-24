@@ -468,45 +468,45 @@ public class ${name}Entity extends ${extendsClass} <#if interfaces?size gt 0>imp
 	</#if>
 
 	<#if data.entityDataEntries?has_content || data.guiBoundTo?has_content || data.sensitiveToVibration>
-	@Override public void addAdditionalSaveData(CompoundTag compound) {
-		super.addAdditionalSaveData(compound);
+	@Override public void addAdditionalSaveData(ValueOutput output) {
+		super.addAdditionalSaveData(output);
 		<#list data.entityDataEntries as entry>
 			<#if entry.value().getClass().getSimpleName() == "Integer">
-			compound.putInt("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
+			output.putInt("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
 			<#elseif entry.value().getClass().getSimpleName() == "Boolean">
-			compound.putBoolean("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
+			output.putBoolean("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
 			<#elseif entry.value().getClass().getSimpleName() == "String">
-			compound.putString("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
+			output.putString("Data${entry.property().getName()}", this.entityData.get(DATA_${entry.property().getName()}));
 			</#if>
 		</#list>
 		<#if data.guiBoundTo?has_content>
-		compound.put("InventoryCustom", inventory.serializeNBT(this.registryAccess()));
+		input.put("InventoryCustom", inventory.serializeNBT(this.registryAccess()));
 		</#if>
 		<#if data.sensitiveToVibration>
 		VibrationSystem.Data.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.vibrationData)
 			.resultOrPartial(e -> ${JavaModName}.LOGGER.error("Failed to encode vibration listener for ${name}: '{}'", e))
-			.ifPresent(listener -> compound.put("listener", listener));
+			.ifPresent(listener -> input.put("listener", listener));
 		</#if>
 	}
 
-	@Override public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
+	@Override public void readAdditionalSaveData(ValueInput input) {
+		super.readAdditionalSaveData(input);
 		<#list data.entityDataEntries as entry>
-			if (compound.contains("Data${entry.property().getName()}"))
+			if (input.getBooleanOr("Data${entry.property().getName()}", false))
 				<#if entry.value().getClass().getSimpleName() == "Integer">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getIntOr("Data${entry.property().getName()}", 0));
+				this.entityData.set(DATA_${entry.property().getName()}, input.getIntOr("Data${entry.property().getName()}", 0));
 				<#elseif entry.value().getClass().getSimpleName() == "Boolean">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getBooleanOr("Data${entry.property().getName()}", false));
+				this.entityData.set(DATA_${entry.property().getName()}, input.getBooleanOr("Data${entry.property().getName()}", false));
 				<#elseif entry.value().getClass().getSimpleName() == "String">
-				this.entityData.set(DATA_${entry.property().getName()}, compound.getStringOr("Data${entry.property().getName()}", ""));
+				this.entityData.set(DATA_${entry.property().getName()}, input.getStringOr("Data${entry.property().getName()}", ""));
 				</#if>
 		</#list>
 		<#if data.guiBoundTo?has_content>
-		if (compound.get("InventoryCustom") instanceof CompoundTag inventoryTag)
+		if (input.get("InventoryCustom") instanceof CompoundTag inventoryTag)
 			inventory.deserializeNBT(this.registryAccess(), inventoryTag);
 		</#if>
 		<#if data.sensitiveToVibration>
-		if (compound.contains("listener", Tag.TAG_COMPOUND)) {
+		if (input.contains("listener", Tag.TAG_COMPOUND)) {
 			VibrationSystem.Data.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.getCompound("listener"))
 				.resultOrPartial(e -> ${JavaModName}.LOGGER.error("Failed to parse vibration listener for ${name}: '{}'", e))
 				.ifPresent(data -> this.vibrationData = data);
