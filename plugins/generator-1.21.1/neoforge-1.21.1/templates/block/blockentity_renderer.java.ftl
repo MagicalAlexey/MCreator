@@ -33,7 +33,7 @@
 
 package ${package}.client.renderer.block;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT) public class ${name}Renderer implements BlockEntityRenderer<${name}BlockEntity> {
+@EventBusSubscriber(Dist.CLIENT) public class ${name}Renderer implements BlockEntityRenderer<${name}BlockEntity> {
 
 	private final CustomHierarchicalModel model;
 	private final ResourceLocation texture;
@@ -53,7 +53,8 @@ package ${package}.client.renderer.block;
 					"y": "blockEntity.getBlockPos().getY()",
 					"z": "blockEntity.getBlockPos().getZ()",
 					"blockstate": "blockEntity.getBlockState()",
-					"world": "blockEntity.getLevel()"
+					"world": "blockEntity.getLevel()",
+					"entity": "Minecraft.getInstance().player"
 				}, false/>, tickCount);
 			<#else>
 				blockEntity.animationState${animation?index}.animateWhen(true, tickCount);
@@ -127,10 +128,6 @@ package ${package}.client.renderer.block;
 		public void setupBlockEntityAnim(${name}BlockEntity blockEntity, float ageInTicks) {
 			animator.setupBlockEntityAnim(blockEntity, ageInTicks);
 			super.setupAnim(null, 0, 0, ageInTicks, 0, 0);
-		}
-
-		public ModelPart getRoot() {
-			return root;
 		}
 
 		private class BlockEntityHierarchicalModel extends HierarchicalModel<Entity> {
