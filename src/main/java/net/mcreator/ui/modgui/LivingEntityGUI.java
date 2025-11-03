@@ -309,10 +309,9 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 			compileNotesArrayList.add(aiUnmodifiableCompileNote);
 		}
 
-		SwingUtilities.invokeLater(() -> {
-			compileNotesPanel.updateCompileNotes(compileNotesArrayList);
-			blocklyChangedListeners.forEach(l -> l.blocklyChanged(blocklyPanel, jsEventTriggeredChange));
-		});
+		SwingUtilities.invokeLater(() -> compileNotesPanel.updateCompileNotes(compileNotesArrayList));
+
+		blocklyChangedListeners.forEach(l -> l.blocklyChanged(blocklyPanel, jsEventTriggeredChange));
 
 		return compileNotesArrayList;
 	}
@@ -927,6 +926,9 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 				L10N.label("elementgui.living_entity.bind_to_gui")));
 		props.add(guiBoundTo);
 
+		guiBoundTo.addEntrySelectedListener(e -> refreshGUIProperties());
+		refreshGUIProperties();
+
 		props.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/inventory_size"),
 				L10N.label("elementgui.living_entity.inventory_size")));
 		props.add(inventorySize);
@@ -997,6 +999,13 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 		enableOrDisableFields();
 
 		editorReady = true;
+	}
+
+	private void refreshGUIProperties() {
+		boolean isGuiBoundToEmpty = !guiBoundTo.isEmpty();
+
+		inventorySize.setEnabled(isGuiBoundToEmpty);
+		inventoryStackSize.setEnabled(isGuiBoundToEmpty);
 	}
 
 	private void refreshSpawnProperties() {
@@ -1109,6 +1118,7 @@ public class LivingEntityGUI extends ModElementGUI<LivingEntity> implements IBlo
 
 		refreshEggProperties();
 		refreshSpawnProperties();
+		refreshGUIProperties();
 	}
 
 	@Override public void openInEditingMode(LivingEntity livingEntity) {
